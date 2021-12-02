@@ -20,7 +20,91 @@ body {
   border-radius: 2px;
 }
 
-.headline {
+// .headline {
+//   width: 100%;
+//   font-size: 100px;
+//   font-weight: 100;
+//   text-align: center;
+//   color: rgba(175, 47, 47, 0.15);
+//   text-rendering: optimizeLegibility;
+//   margin: 20px auto;
+//   color: #3cb6c3;
+//   font-family: "Playfair Display", serif;
+//   font-style: italic;
+//   letter-spacing: 3.4px;
+//   text-align: center;
+//   border: 1px solid;
+//   border-radius: 50px;
+//   margin-bottom: 80px;
+// }
+
+// .indicator {
+//   background: #fff;
+//   width: 100%;
+//   font-size: 100px;
+//   font-weight: 100;
+//   text-align: center;
+//   color: rgb(127, 127, 127);
+//   text-rendering: optimizeLegibility;
+//   box-shadow: 0px 9px 28px 17px rgba(35, 55, 206, 0.26);
+//   margin: 0 auto;
+//   border-radius: 50px;
+//   margin-bottom: 70px;
+// }
+
+// .main {
+//   padding-top: 40px;
+//   // padding-bottom: 20px;
+//   border: none;
+//   // box-shadow: inset 0 -2px 1px rgb(0 0 0 / 3%);
+//   // background: #fff;
+// }
+// .container {
+//   display: flex;
+//   flex-direction: row;
+//   justify-content: center;
+//   margin: 0;
+//   padding: 0;
+//   position: relative;
+//   font-size: 24px;
+// }
+
+// .is-dark {
+//   background-color: #545151;
+//   border-color: transparent;
+//   color: #fff;
+// }
+
+// .button {
+//   margin: auto;
+//   background: linear-gradient(to right, #a188fc 0%, #2eeade 50%, #a188fc 100%);
+//   background-size: 200%;
+//   background-position: 100%;
+//   color: #ccffff;
+//   padding: 1em 3em;
+//   border-radius: 2em;
+//   display: inline-block;
+//   box-shadow: 0 0 20px #229999;
+//   text-shadow: 0 0 5px #000;
+//   transition: all 0.7s;
+//   border: solid 1px #777f8b;
+//   cursor: pointer;
+//   margin-bottom: 8px;
+// }
+
+// .button:hover {
+//   background: linear-gradient(to right, #a188fc 0%, #2eeade 50%, #a188fc 100%);
+//   background-size: 200%;
+//   background-position: 0px;
+//   box-shadow: 0 0 40px #55ffff;
+//   color: #ccffff;
+//   text-shadow: 0 0 30px #000000;
+//   border: solid 1px #ccffff;
+// }
+
+// =======================================
+
+.watchText {
   width: 100%;
   font-size: 100px;
   font-weight: 100;
@@ -38,7 +122,7 @@ body {
   margin-bottom: 80px;
 }
 
-.indicator {
+.timer {
   background: #fff;
   width: 100%;
   font-size: 100px;
@@ -52,30 +136,14 @@ body {
   margin-bottom: 70px;
 }
 
-.main {
-  padding-top: 40px;
-  // padding-bottom: 20px;
-  border: none;
-  // box-shadow: inset 0 -2px 1px rgb(0 0 0 / 3%);
-  // background: #fff;
-}
-.container {
+.stopwatch {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  font-size: 24px;
+  flex-direction: column;
+  align-items: center;
+  margin: 50px 20px 0;
+  font-size: 40px;
 }
-
-.is-dark {
-  background-color: #545151;
-  border-color: transparent;
-  color: #fff;
-}
-
-.button {
+.control-panel__button {
   margin: auto;
   background: linear-gradient(to right, #a188fc 0%, #2eeade 50%, #a188fc 100%);
   background-size: 200%;
@@ -90,9 +158,9 @@ body {
   border: solid 1px #777f8b;
   cursor: pointer;
   margin-bottom: 8px;
+  margin-right: 12px;
 }
-
-.button:hover {
+.control-panel__button:hover {
   background: linear-gradient(to right, #a188fc 0%, #2eeade 50%, #a188fc 100%);
   background-size: 200%;
   background-position: 0px;
@@ -100,4 +168,8 @@ body {
   color: #ccffff;
   text-shadow: 0 0 30px #000000;
   border: solid 1px #ccffff;
+}
+
+.hidden {
+  display: none;
 }

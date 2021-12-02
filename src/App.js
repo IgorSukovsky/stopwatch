@@ -1,78 +1,110 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { Observable, Subject } from "rxjs";
-import { map, buffer, debounceTime, filter, takeUntil } from "rxjs/operators";
+import React, { useState, useEffect } from "react";
+import { interval, fromEvent, merge, NEVER } from "rxjs";
+import {
+  switchMap,
+  scan,
+  tap,
+  startWith,
+  mapTo,
+  throttle,
+} from "rxjs/operators";
+import classNames from "classnames";
+import "./styles/styles.scss";
 
-import { Controls } from "./components/Controls";
+const getFormattedTime = (sec) => {
+  const hh = ("0" + Math.floor(sec / 3600)).slice(-2);
+  const remainderM = sec % 3600;
+
+  const mm = ("0" + Math.floor(remainderM / 60)).slice(-2);
+  const remainderS = remainderM % 60;
+
+  const ss = ("0" + remainderS).slice(-2);
+
+  return `${hh}:${mm}:${ss}`;
+};
 
 const App = () => {
-  const [state, setState] = useState("stop");
-  const [time, setTime] = useState(0);
+  const startBtn = React.useRef(null);
+  const pauseBtn = React.useRef(null);
+  const stopBtn = React.useRef(null);
+  const resetBtn = React.useRef(null);
 
-  const stop$ = useMemo(() => new Subject(), []);
-  const click$ = useMemo(() => new Subject(), []);
-
-  const start = () => {
-    setState("start");
-  };
-
-  const stop = useCallback(() => {
-    setTime(0);
-    setState("stop");
-  }, []);
-
-  const reset = useCallback(() => {
-    setTime(0);
-  }, []);
-
-  const wait = useCallback(() => {
-    click$.next();
-    setState("wait");
-    click$.next();
-  }, [click$]);
+  const [counter, setCounter] = useState(0);
+  const [isCounting, setIsCounting] = useState(false);
 
   useEffect(() => {
-    const doubleClick$ = click$.pipe(
-      buffer(click$.pipe(debounceTime(300))),
-      map((list) => list.length),
-      filter((value) => value >= 2)
+    const start$ = fromEvent(startBtn.current, "click").pipe(
+      mapTo({ newIsCounting: true })
     );
-    const timer$ = new Observable((observer) => {
-      let count = 0;
-      const intervalId = setInterval(() => {
-        observer.next((count += 1));
-      }, 1000);
+    const stop$ = fromEvent(stopBtn.current, "click").pipe(
+      mapTo({ newIsCounting: false, newCounter: 0 })
+    );
+    const pause$ = fromEvent(pauseBtn.current, "dblclick").pipe(
+      throttle((_) => interval(300)),
+      mapTo({ newIsCounting: false })
+    );
+    const reset$ = fromEvent(resetBtn.current, "click").pipe(
+      mapTo({ newIsCounting: true, newCounter: 0 })
+    );
 
-      return () => {
-        clearInterval(intervalId);
-      };
-    });
+    const timer$ = merge(start$, stop$, pause$, reset$).pipe(
+      startWith({
+        newIsCounting: false,
+        newCounter: 0,
+      }),
+      scan((state, curr) => ({ ...state, ...curr }), {}),
+      tap((state) => {
+        setCounter(state.newCounter);
+        setIsCounting(state.newIsCounting);
+      }),
+      switchMap((state) =>
+        state.newIsCounting
+          ? interval(1000).pipe(
+              tap((_) => {
+                state.newCounter++;
+                return 1;
+              }),
+              tap((_) => setCounter(state.newCounter))
+            )
+          : NEVER
+      )
+    );
+    timer$.subscribe();
 
-    const subscribtion$ = timer$
-      .pipe(takeUntil(doubleClick$))
-      .pipe(takeUntil(stop$))
-      .subscribe({
-        next: () => {
-          if (state === "start") {
-            setTime((prev) => prev + 1);
-          }
-        },
-      });
-
-    return () => {
-      subscribtion$.unsubscribe();
-    };
-  }, [click$, state, stop$]);
+    return () => {};
+  }, []);
 
   return (
-    <section className="stopwatch">
-      <Controls
-        time={time}
-        start={start}
-        stop={stop}
-        reset={reset}
-        wait={wait}
-      />
-    </section>
+    <div className="stopwatch">
+      <h1 className="watchText">StopWatch</h1>
+      <span className="timer">{getFormattedTime(counter)}</span>
+      <div className="control-panel">
+        <button
+          className={classNames(
+            "control-panel__button",
+            isCounting && "hidden"
+          )}
+          ref={startBtn}
+        >
+          Start
+        </button>
+        <button
+          className={classNames(
+            "control-panel__button",
+            !isCounting && "hidden"
+          )}
+          ref={stopBtn}
+        >
+          Stop
+        </button>
+        <button className="control-panel__button" ref={pauseBtn}>
+          Wait
+        </button>
+        <button className="control-panel__button" ref={resetBtn}>
+          Reset
+        </button>
+      </div>
+    </div>
   );
 };
 
